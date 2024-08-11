@@ -104,6 +104,7 @@ const loginUser = asyncHandler(async (req,res)=>{
     const user = await User.findOne({
         $or: [{username}, {email}]
     })
+   
 
     if(!user){
         throw new ApiError(404,"User does not exist")
@@ -111,6 +112,7 @@ const loginUser = asyncHandler(async (req,res)=>{
 
     // validate the password
     const isPasswordValid = await user.isPasswordCorrect(password)
+   
 
     if(!isPasswordValid){
         throw new ApiError(401,"Password incorrect")
@@ -119,9 +121,10 @@ const loginUser = asyncHandler(async (req,res)=>{
     //access and refresh token
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
-    const loggedInUser = User.findById(user._id).
+    const loggedInUser = await User.findById(user._id).
     select("-password -refreshToken")
-    
+     
+    console.log(loggedInUser)
     //send cookie
     const options = {
         httpOnly:true,
@@ -131,12 +134,12 @@ const loginUser = asyncHandler(async (req,res)=>{
     //send response
     return res.status(200)
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken,options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(
             200,
             {
-                user: loggedInUser, accessToken, refreshToken
+               user:loggedInUser, accessToken, refreshToken
             },
             "User logged in successfully"
         ))
@@ -146,8 +149,8 @@ const logoutUser = asyncHandler(async(req,res)=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {
-                refreshToken: undefined
+            $unset: {
+                refreshToken: 1
             }
             
         },
