@@ -32,6 +32,7 @@ router.route("/update-avatar").post(
     verifyJWT,
     upload.single("avatar"),
     updateUserAvatar)
+    
 router.route("/update-cover-image").post(
     verifyJWT,
     upload.single("coverImage"),
