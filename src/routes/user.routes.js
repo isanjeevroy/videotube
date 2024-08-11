@@ -26,14 +26,14 @@ router.route("/logout").post(verifyJWT, logoutUser)
 
 router.route("/refresh-token").post(refreshAccessToken)
 
-router.route("/update-profile").post(verifyJWT, updateAccountDetails)
+router.route("/update-profile").patch(verifyJWT, updateAccountDetails)
 
-router.route("/update-avatar").post(
+router.route("/update-avatar").patch(
     verifyJWT,
     upload.single("avatar"),
     updateUserAvatar)
     
-router.route("/update-cover-image").post(
+router.route("/update-cover-image").patch(
     verifyJWT,
     upload.single("coverImage"),
     updateCoverImage)
