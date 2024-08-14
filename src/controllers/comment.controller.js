@@ -6,6 +6,8 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
+
+    //get data
     const {videoId} = req.params
     const {page = 1, limit = 2} = req.query
 
@@ -26,6 +28,9 @@ const getVideoComments = asyncHandler(async (req, res) => {
        
     ]).skip(skip).limit(limit)
 
+    if(!comments){
+        throw new ApiError(400,"Not comment found for this video")
+    }
 
     return res
         .status(200)
