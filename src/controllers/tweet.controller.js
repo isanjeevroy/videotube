@@ -13,7 +13,7 @@ const createTweet = asyncHandler(async (req, res) => {
 
     // validate data
     if(!content){
-        throw new ApiError(400,"Field is required!")
+        throw new ApiError(400, "Field is required!")
     }
 
     // create in database
@@ -26,7 +26,7 @@ const createTweet = asyncHandler(async (req, res) => {
     return res
     .status(200)
     .json(
-        new ApiResponse(200,tweet,"Tweet is created successfully!")
+        new ApiResponse(200, tweet, "Tweet is created successfully!")
     )
    
 })
@@ -36,15 +36,15 @@ const getUserTweets = asyncHandler(async (req, res) => {
     const {userId} = req.params
 
     //validate user id
-    if(!userId?.trim()){
-        throw new ApiError(400,"User id is missing!")
+    if(!isValidObjectId(userId)){
+        throw new ApiError(400, "Invalid user id!")
     }
 
     // search in database
     const tweets = await Tweet.find({owner: userId}).select("-owner")
   
     if(!tweets?.length){
-        throw new ApiError(400,"No tweets exists for this user!")
+        throw new ApiError(400, "No tweets exists for this user!")
     }
 
     // res send
@@ -60,12 +60,12 @@ const updateTweet = asyncHandler(async (req, res) => {
     const {content} = req.body
     
     // validate data
-    if(!tweetId?.trim()){
-        throw new ApiError(400,"Tweet id is missing!")
+    if(!isValidObjectId(tweetId)){
+        throw new ApiError(400, "Invalid tweet id!")
     }
 
     if(!content){
-        throw new ApiError(400,"Field is required!")
+        throw new ApiError(400, "Field is required!")
     }
 
     // update in database
@@ -88,20 +88,20 @@ const deleteTweet = asyncHandler(async (req, res) => {
     //TODO: delete tweet
     const {tweetId} = req.params
 
-    if(!tweetId?.trim()){
-        throw new ApiError(400,"Tweet id is missing!")
+    if(!isValidObjectId(tweetId)){
+        throw new ApiError(400, "Invalid tweet id!")
     }
 
     const tweet = await Tweet.findByIdAndDelete(tweetId)
 
     if(!tweet){
-        throw new ApiError(400,"Tweet' id is invalid")
+        throw new ApiError(500, "Error occured while deleting!")
     }
 
     // res send
     return res
     .status(400)
-    .json(new ApiResponse(200,tweet,"Tweet is deleted successfully!"))
+    .json(new ApiResponse(200, tweet, "Tweet is deleted successfully!"))
 })
 
 export {

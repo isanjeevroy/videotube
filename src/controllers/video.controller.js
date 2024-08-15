@@ -13,14 +13,14 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
     const { page = 1, limit = 2, query, sortBy, sortType, userId } = req.query
 
-    if(userId.length!==24){
+    if(!isValidObjectId(userId)){
         throw new ApiError(400, "Invalid user id!")
     }
 
     const totalVideos = await Video.countDocuments({owner:userId})
 
     if(!totalVideos){
-        throw new ApiError(400,"Video not found!")
+        throw new ApiError(400, "Video not found!")
     }
 
     const totalPage = Math.ceil( totalVideos / limit )
@@ -95,8 +95,8 @@ const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
 
     //validate videoId
-    if (!videoId) {
-        throw new ApiError(400, "Video Id is missing!")
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400, "Invalid video id!")
     }
 
     //find video by id
@@ -122,6 +122,10 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body
 
     //validate data
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400, "Invalid video id!")
+    }
+
     if (!title && !description) {
         throw new ApiError(400, "All field are required!")
     }
@@ -166,8 +170,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
 
     // validate id
-    if (!videoId) {
-        throw new ApiError(400, "Video's id is missing!")
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400, "Invalid video id!")
     }
 
     //find the video exist or not
@@ -191,10 +195,10 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
 
     //validate video id
-    if (!videoId) {
-        throw new ApiError(400, "Video id is missing!")
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400, "Invalid video id!")
     }
-
+    
     //find video
     const video = await Video.findById(videoId)
 

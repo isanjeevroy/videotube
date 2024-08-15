@@ -9,8 +9,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: toggle like on video
 
-    if (!videoId && videoId.length !== 24) {
-        throw new ApiError(400, "Video id is valid!")
+    if (!isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video id!")
     }
 
     const liked = await Like.findOne({
@@ -38,8 +38,9 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 const toggleCommentLike = asyncHandler(async (req, res) => {
     const { commentId } = req.params
     //TODO: toggle like on comment
-    if (!commentId && commentId.length !== 24) {
-        throw new ApiError(400, "Comment id is valid!")
+
+    if (!isValidObjectId(commentId)) {
+        throw new ApiError(400, "Invalid comment id!")
     }
     const liked = await Like.findOne({
         comment: commentId,
@@ -66,8 +67,9 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 const toggleTweetLike = asyncHandler(async (req, res) => {
     const { tweetId } = req.params
     //TODO: toggle like on tweet
-    if (!tweetId && tweetId.length !== 24) {
-        throw new ApiError(400, "Tweet id is valid!")
+
+    if (!isValidObjectId(tweetId)) {
+        throw new ApiError(400, "Invalid tweet id!")
     }
     const liked = await Like.findOne({
         tweet: tweetId,
@@ -93,6 +95,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 
 const getLikedVideos = asyncHandler(async (req, res) => {
     //TODO: get all liked videos
+    
     let likedVideos = await Like.find({
         $and: [
             { video: { $exists: true } },

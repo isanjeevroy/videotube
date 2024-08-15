@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose,{isValidObjectId} from "mongoose"
 import {Comment} from "../models/comment.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
@@ -10,6 +10,10 @@ const getVideoComments = asyncHandler(async (req, res) => {
     //get data
     const {videoId} = req.params
     const {page = 1, limit = 2} = req.query
+
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400, "Invalid video id!")
+    }
 
     let skip = ( page - 1 ) * limit
 
@@ -29,7 +33,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
     ]).skip(skip).limit(limit)
 
     if(!comments){
-        throw new ApiError(400,"Not comment found for this video")
+        throw new ApiError(400, "Not comment found for this video")
     }
 
     return res
@@ -42,8 +46,12 @@ const addComment = asyncHandler(async (req, res) => {
     const {videoId} = req.params
     const {content} = req.body
 
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400, "Invalid video id!")
+    }
+
     if(!content){
-        throw new ApiError(400,"Field is required!")
+        throw new ApiError(400, "Field is required!")
     }
 
     const comment = await Comment.create({
@@ -53,7 +61,7 @@ const addComment = asyncHandler(async (req, res) => {
     })
 
     if(!comment){
-        throw new ApiError(500,"Comment doesn't created, because of server problem!")
+        throw new ApiError(500, "Comment doesn't created, because of server problem!")
     }
 
     return res
@@ -67,6 +75,10 @@ const updateComment = asyncHandler(async (req, res) => {
     const {commentId} = req.params
 
     const {content} = req.body
+
+    if(!isValidObjectId(commentId)){
+        throw new ApiError(400, "Invalid comment id!")
+    }
 
     if(!content){
         throw new ApiError(400, "Filed is requried!")
@@ -88,6 +100,10 @@ const updateComment = asyncHandler(async (req, res) => {
 const deleteComment = asyncHandler(async (req, res) => {
     // TODO: delete a comment
     const {commentId} = req.params
+
+    if(!isValidObjectId(commentId)){
+        throw new ApiError(400, "Invalid comment id!")
+    }
 
     const comment = await Comment.findByIdAndDelete(commentId)
 
