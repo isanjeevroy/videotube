@@ -10,6 +10,10 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     const { channelId } = req.params
     // TODO: toggle subscription
 
+    if(!isValidObjectId(channelId)){
+        throw new ApiError(400,"Invalid channel id!")
+    }
+
     const subscribedChannel = await Subscription.findOne(
         {
             subscriber: req.user?._id,
@@ -39,6 +43,9 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const { channelId } = req.params
 
+    if(!isValidObjectId(channelId)){
+        throw new ApiError(400,"Invalid channel id!")
+    }
     const subscribers = await User.aggregate([
         {
             $match: {
@@ -89,14 +96,22 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
         }
     ]);
 
+    if(subscribers.length===0){
+        throw new ApiError(400,"No one has subscribed your channel!")
+    }
+
     return res
         .status(200)
-        .json(new ApiResponse(200, subscribers, "Subsribers fetched successfully!"))
+        .json(new ApiResponse(200, subscribers, "Subscribers fetched successfully!"))
 })
 
 // controller to return channel list to which user has subscribed
 const getSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params
+
+    if(!isValidObjectId(subscriberId)){
+        throw new ApiError(400,"Invalid subscriber id!")
+    }
 
     const subscribedChannels = await User.aggregate([
         {
@@ -149,6 +164,11 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
             }
         }
     ]);
+
+    if(subscribedChannels.length === 0){
+        throw new ApiError(400,"You haven't subscribed any channel!")
+    }
+
     return res
         .status(200)
         .json(new ApiResponse(200, subscribedChannels, "Subsribered channel fetched successfully!"))
