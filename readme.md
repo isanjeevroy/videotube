@@ -53,4 +53,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 ## Contact
 
-For any inquiries or support, please reach out to @isanjeevroy.
+For any inquiries or support, please reach out to [![Instagram](https://img.shields.io/badge/Instagram-%40isanjeevroy-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/isanjeevroy/)
